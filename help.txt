@@ -1,0 +1,8 @@
+usage: susano [-v | --version] [-h | --help] [-C <path>]
+              [--namespace=<name>]
+              [--exec-path[=<path>]] <command> [<args>]
+
+These are common Susano command used in various situations:
+
+start working area (see also: susano help tutorial)
+    
