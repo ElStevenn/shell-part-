@@ -6,11 +6,10 @@ source ./modules/cvi.sh
 source ./modules/fear_greed.sh
 
 # Check Arguments
-
 if [ "$1" == "user" ]; then
     # Check User Argument
     if [ "$2" == "session" ]; then
-        if [ "$3" == "session" ]; then
+        if [ "$3" == "" ]; then
             # Show actual info about the session and a tiny brief
             session
         elif [ "$3" == "login" ]; then
@@ -21,6 +20,7 @@ if [ "$1" == "user" ]; then
             logout_user
         elif [ "$3" == "register" ]; then
             # Register
+            echo ""
             register_user
         elif [ "$3" == "delete_acount" ]; then
             # Delete account
@@ -31,14 +31,10 @@ if [ "$1" == "user" ]; then
         # Implement your user configuration logic here
         :
     fi
-
-
 elif [ "$1" == "init" ]; then
     init_susano
-
-elif [[ "$1" == "help" ]] || [[ "$1" == "h" ]]; then
+elif [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]]; then
     cat help.txt
-
 elif [ "$1" == "cvi" ]; then
     # Crypto Volatility Index
     if [[ "$2" == "v" ]] || [[ "$2" == "value" ]]; then
@@ -56,14 +52,12 @@ elif [ "$1" == "cvi" ]; then
             :
         fi
     fi
-
 elif [[ "$1" == "fg" ]] || [[ "$1" == "fear_greed" ]]; then
     # Fear and Greed Index
     if [[ "$2" == "v" ]] || [[ "$2" == "value" ]]; then
         today_fear_greed=$(get_today_fear_greed)
         echo "Today's Fear and Greed Index value: $today_fear_greed"
     fi
-
 elif [[ "$1" == "trading" ]]; then
     if [[ "$2" == "assets" ]]; then 
         :
@@ -94,10 +88,8 @@ elif [[ "$1" == "trading" ]]; then
                 esac
             done
         fi
-    
     elif [[ "$2" == "positions" ]] || [[ "$2" == "pos" ]]; then
         :
-
     elif [[ "$2" == "orders" ]]; then
         if [ "$3" == "open" ]; then
             :
@@ -106,11 +98,5 @@ elif [[ "$1" == "trading" ]]; then
         elif [ "$3" == "show" ]; then
             :
         fi
-
-fi
-
-
-
-
-
-
+    fi
+fi  

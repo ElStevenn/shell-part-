@@ -4,5 +4,20 @@ usage: susano [-v | --version] [-h | --help] [-C <path>]
 
 These are common Susano command used in various situations:
 
-start working area (see also: susano help tutorial)
-    
+main commands:
+    init
+    help 
+    orders
+    show
+
+user session (see also: susano help tutorial)
+    session         Show actual info about the session
+    login           Login new session (you're actual session will be loged out)
+    register        Register new account
+    delete_account  Delete the account you are logged on
+
+    conf
+
+Cripto Volatility Index: cvi
+    v | value       Show actual CVI value
+    subscribe       Subscribe to CVI and receive notifications and set its conf

@@ -1,8 +1,14 @@
 #!/bin/bash
 
-source ./init.sh
+source ./modules/init.sh
 
 function login_user() {
+    user_id=$(grep '^user_id=' /usr/local/susano/user_susano.conf | cut -d '=' -f 2)
+    if [ "$user_id" != 'null' ]; then
+        echo "You already have a user, run 'susano session logout' first"
+        return 1
+    fi
+
     echo "Enter username:"
     read username
 
@@ -25,9 +31,9 @@ function login_user() {
             user_id=$(echo "$response" | jq -r '.id')
             user_name=$(echo "$response" | jq -r '.username')
             email=$(echo "$response" | jq -r '.email') 
-            echo "user_id=$user_id" > /usr/local/susano/user_susano.conf
-            echo "username=$user_name" >> /usr/local/susano/user_susano.conf
-            echo "email=$email" >> /usr/local/susano/user_susano.conf
+            echo "user_id=$user_id" | sudo tee /usr/local/susano/user_susano.conf > /dev/null
+            echo "username=$user_name" | sudo tee -a /usr/local/susano/user_susano.conf > /dev/null
+            echo "email=$email" | sudo tee -a /usr/local/susano/user_susano.conf > /dev/null
 
             echo "Login successful and user data updated."
         else
@@ -38,6 +44,7 @@ function login_user() {
         echo "Login failed: $message"
     fi
 }
+
 
 function register_user() {
     echo "Enter username:"
@@ -96,14 +103,19 @@ function register_user() {
 }
 
 function logout_user() {
-    user_id=$(cat /usr/local/susano/user_susano.conf | grep user_id | cut -d '=' -f 2)
+    user_id=$(grep '^user_id=' /usr/local/susano/user_susano.conf | cut -d '=' -f 2)
 
     response=$(curl -s -X 'PUT' \
     'http://18.227.161.231:8000/logout/'"$user_id" \
     -H 'accept: application/json')
 
+    # Print API response and delete all cache data
     status=$(echo "$response" | jq -r '.status')
     if [ "$status" == "success" ]; then
+        echo "user_id=null" | sudo tee /usr/local/susano/user_susano.conf > /dev/null
+        echo "username=null" | sudo tee -a /usr/local/susano/user_susano.conf > /dev/null
+        echo "email=null" | sudo tee -a /usr/local/susano/user_susano.conf > /dev/null
+
         echo "Logout successful."
     else
         message=$(echo "$response" | jq -r '.error')
@@ -118,16 +130,19 @@ function session() {
 
     # Subscriptions
     # MAKE IT IN THE FUTURE IMPORTANT
-
     echo "---SESSION---"
-    echo "Username: $user_name"
-    echo "Email: $user_email"
+    if [ "$user_name" != 'null' ]; then
+        echo "Username: $user_name"
+        echo "Email: $user_email"
 
-    echo "---SUBSCRIPTIONS---"
-    echo "Notifications subscribed: Not available yet"
-    echo "Economic calendar conf: Not available yet"
-    echo "Trading bot: Not available yet"
-    echo ""
+        echo "---SUBSCRIPTIONS---"
+        echo "Notifications subscribed: Not available yet"
+        echo "Economic calendar conf: Not available yet"
+        echo "Trading bot: Not available yet"
+        echo ""
+    else
+        echo "Not avariable yet, execute 'susano session register / login'"
+    fi
 }
 
 function delete_account() {
